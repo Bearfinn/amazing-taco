@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { config } from "process";
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { formatNumber } from "../utils/format";
+import { formatNumber, round } from "../utils/format";
 import {
   getBonusConfig,
   getExtractorConfig,
@@ -24,7 +24,7 @@ const Home: NextPage = () => {
   };
 
   const getShingPerHour = (value: number) => {
-    return Number((value / 28) * 10.08 * 1e4) / 1e4;
+    return round((value / 28) * 10.08)
   };
 
   const calculateTotalBonus = (bonuses: any[] = []) => {
@@ -94,6 +94,7 @@ const Home: NextPage = () => {
           <input
             className="border px-2 py-2 rounded"
             value={address}
+            placeholder={`cloud.wam or anchorwallet`}
             onKeyDown={(e) => e.key === "Enter" && fetchData()}
             onChange={(e) => setAddress(e.target.value)}
           ></input>

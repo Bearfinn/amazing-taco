@@ -23,7 +23,6 @@ const Home: NextPage = () => {
   };
 
   const getShingPerHour = (value: number) => {
-    console.log(formatNumber(Number(value) / 28 * 10.08))
     return Number((value) / 28 * 10.08 * 1e4) / 1e4
   };
 
@@ -35,7 +34,8 @@ const Home: NextPage = () => {
       );
       sum += Number(extractor.value) * bonus.value
     });
-    return Math.round(sum * 100 * 1e4) / 1e4
+    const totalBonus = Math.round(sum * 100 * 1e4) / 1e4
+    return Math.min(totalBonus, 10)
   };
 
   const calculateTotalShingPerHour = (extractors: any[] = []) => {

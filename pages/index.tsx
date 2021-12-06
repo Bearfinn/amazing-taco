@@ -6,7 +6,8 @@ import styles from "../styles/Home.module.css";
 import { rpc } from "../utils/wax";
 
 const Home: NextPage = () => {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<any>(null);
+  const [extractors, setExtractors] = useState<any[]>([])
   const address = ".3mrs.wam";
   const getData = async ({ address }: any) => {
     const { rows } = await rpc.get_table_rows({
@@ -23,11 +24,34 @@ const Home: NextPage = () => {
     return rows;
   };
 
+  const getExtractorConfig = async () => {
+    const { rows } = await rpc.get_table_rows({
+      json: true,
+      code: "g.taco",
+      scope: "g.taco",
+      table: "configextr",
+      // index_position: 1,
+      limit: 10
+    });
+    
+    return rows;
+  };
+
+  const getExtractor = (key: number) => {
+    return extractors.find((extractor) => extractor.template_id === key)
+  }
+
+  useEffect(() => {
+    getExtractorConfig().then((response) => {
+      setExtractors(response)
+    })
+  }, [])
+
   useEffect(() => {
     if (address) {
       getData(address).then((response) => {
-        setData(response);
-      });
+        setData(response[0]);
+      })
     }
   }, [address]);
 
@@ -41,11 +65,31 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Shingilator <span className="text-sm">Beta</span>
         </h1>
         <div>
         {JSON.stringify(data)}
 
+        </div>
+        <div>
+          {data?.account}
+        </div>
+        <div>
+          {data && data.extractors.map((extractor: { key: number, value: number }) => {
+            return <div key={extractor.key}>
+              {extractor.value}x {getExtractor(extractor.key).label} {getExtractor(extractor.key).value / 28 * 10.08}
+            </div>
+          })}
+        </div>
+        <div>
+          {data && data.bonus.map((bonus: { key: number, value: number }) => {
+            <div>
+              {bonus.value}
+            </div>
+          })}
+        </div>
+        <div>
+          { data && data.to_claim }
         </div>
       </main>
 

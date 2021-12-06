@@ -25,7 +25,7 @@ const Home: NextPage = () => {
   };
 
   const getShingPerHour = (value: number) => {
-    return round((value / 28) * 10.08)
+    return round((value / 28) * 10.08);
   };
 
   const calculateTotalBonus = (bonuses: any[] = []) => {
@@ -46,7 +46,7 @@ const Home: NextPage = () => {
       const extractor = getExtractor(extractorInfo.key);
       sum += getShingPerHour(extractor.value) * extractorInfo.value;
     });
-    return round(sum)
+    return round(sum);
   };
 
   useEffect(() => {
@@ -121,15 +121,21 @@ const Home: NextPage = () => {
             <div className="grid grid-cols-2 p-4 rounded-md border">
               <div className="col-span-1">Total SHING per hour</div>
               <div>
-                {formatNumber(calculateTotalShingPerHour(data.extractors) *
-                  (1 + calculateTotalBonus(data.bonus) / 100))}
+                {formatNumber(
+                  calculateTotalShingPerHour(data.extractors) *
+                    (1 + calculateTotalBonus(data.bonus) / 100)
+                )}
               </div>
               <div className="col-span-1">Base SHING per hour</div>
-              <div>{formatNumber(calculateTotalShingPerHour(data.extractors))}</div>
+              <div>
+                {formatNumber(calculateTotalShingPerHour(data.extractors))}
+              </div>
               <div className="col-span-1">Calculate Total Bonus</div>
               <div>+{formatNumber(calculateTotalBonus(data.bonus))}%</div>
               <div className="col-span-1">Last claimed</div>
-              <div>{dayjs(data?.last_claim * 1000).format("D MMM YYYY HH:mm:ssZ")}</div>
+              <div>
+                {dayjs(data?.last_claim * 1000).format("D MMM YYYY HH:mm:ssZ")}
+              </div>
               <div className="col-span-1">Pending claim</div>
               <div>{formatNumber(data.to_claim / 1e4)} SHING</div>
             </div>
@@ -208,11 +214,11 @@ const Home: NextPage = () => {
 
       <footer className={styles.footer}>
         <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by bananaminion
+          Powered by <span className="mx-1 underline">bananaminion</span> (Anchor Wallet 🥺)
         </a>
       </footer>
     </div>

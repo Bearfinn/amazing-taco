@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { config } from "process";
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { formatNumber, round } from "../utils/format";
+import { formatNumber, getExtractorImageUrl, round } from "../utils/format";
 import {
   getBonusConfig,
   getExtractorConfig,
@@ -157,7 +157,7 @@ const Home: NextPage = () => {
                             {extractorInfo.value}x
                           </div>
                         </div>
-                        <hr />
+                        <Image src={getExtractorImageUrl(extractor.label)} width="100" height="100" alt="Extractor" />
                         <div className="pt-4">
                           <div>
                             {getShingPerHour(extractor.value) *

@@ -24,7 +24,7 @@ const Home: NextPage = () => {
   };
 
   const getShingPerHour = (value: number) => {
-    return Number((value) / 28 * 10.08 * 1e4) / 1e4
+    return Number((value / 28) * 10.08 * 1e4) / 1e4;
   };
 
   const calculateTotalBonus = (bonuses: any[] = []) => {
@@ -33,10 +33,10 @@ const Home: NextPage = () => {
       const extractor = bonusConfig.find(
         (config) => config.template_id === bonus.key
       );
-      sum += Number(extractor.value) * bonus.value
+      sum += Number(extractor.value) * bonus.value;
     });
-    const totalBonus = Math.round(sum * 100 * 1e4) / 1e4
-    return Math.min(totalBonus, 10)
+    const totalBonus = Math.round(sum * 100 * 1e4) / 1e4;
+    return Math.min(totalBonus, 10);
   };
 
   const calculateTotalShingPerHour = (extractors: any[] = []) => {
@@ -57,17 +57,22 @@ const Home: NextPage = () => {
     });
   }, []);
 
-  const fetchData = async () => {
-    if (address) {
-      getTacoInventory({ address }).then((response) => {
+  const { query } = useRouter();
+
+  const fetchData = async (_address: any = address) => {
+    if (_address) {
+      getTacoInventory({ address: _address }).then((response) => {
         setData(response[0]);
       });
     }
   };
 
-  // useEffect(() => {
-  //   calculateTotalShingPerHour()
-  // }, [address]);
+  useEffect(() => {
+    if (query.address) {
+      setAddress(query.address as string);
+      fetchData(query.address);
+    }
+  }, [query?.address]);
 
   return (
     <div className="container mx-auto">
@@ -89,7 +94,7 @@ const Home: NextPage = () => {
           <input
             className="border px-2 py-2 rounded"
             value={address}
-            onKeyDown={(e) => e.key === 'Enter' && fetchData()}
+            onKeyDown={(e) => e.key === "Enter" && fetchData()}
             onChange={(e) => setAddress(e.target.value)}
           ></input>
           <button
@@ -101,8 +106,15 @@ const Home: NextPage = () => {
         </div>
 
         {data && (
-          <div className="mt-4">
-            <div className="text-xl my-2">{data?.account}</div>
+          <div className="my-4">
+            <div className="my-4">
+              <div className="text-xl">{data?.account}</div>
+              <div className="text-sm text-gray-500 hover:underline">
+                <a
+                  href={`https://shingulator.vercel.app/?address=${address}`}
+                >{`https://shingulator.vercel.app/?address=${address}`}</a>
+              </div>
+            </div>
 
             <div className="grid grid-cols-2">
               <div className="col-span-1">Total SHING per hour</div>

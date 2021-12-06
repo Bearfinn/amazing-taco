@@ -23,7 +23,8 @@ const Home: NextPage = () => {
   };
 
   const getShingPerHour = (value: number) => {
-    return Number(formatNumber(value / 28 * 10.08));
+    console.log(formatNumber(Number(value) / 28 * 10.08))
+    return Number((value) / 28 * 10.08 * 1e4) / 1e4
   };
 
   const calculateTotalBonus = (bonuses: any[] = []) => {

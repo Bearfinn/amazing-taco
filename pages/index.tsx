@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { config } from "process";
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import { rpc } from "../utils/wax";
@@ -9,6 +10,7 @@ const Home: NextPage = () => {
   const [address, setAddress] = useState("");
   const [data, setData] = useState<any>(null);
   const [extractors, setExtractors] = useState<any[]>([]);
+  const [bonusConfig, setBonusConfig] = useState<any[]>([]);
 
   const getData = async ({ address }: any) => {
     const { rows } = await rpc.get_table_rows({
@@ -38,12 +40,36 @@ const Home: NextPage = () => {
     return rows;
   };
 
+  const getBonusConfig = async () => {
+    const { rows } = await rpc.get_table_rows({
+      json: true,
+      code: "g.taco",
+      scope: "g.taco",
+      table: "configbonus",
+      // index_position: 1,
+      limit: 20,
+    });
+
+    return rows;
+  };
+
   const getExtractor = (key: number) => {
     return extractors.find((extractor) => extractor.template_id === key);
   };
 
   const calculateShing = (value: number) => {
     return Number(((value / 28) * 10.08).toFixed(4));
+  };
+
+  const calculateTotalBonus = (bonuses: any[] = []) => {
+    let sum = 0;
+    bonuses.forEach((bonus) => {
+      const extractor = bonusConfig.find(
+        (config) => config.template_id === bonus.key
+      );
+      sum += extractor.value;
+    });
+    return Number((sum * 100).toFixed(4));
   };
 
   const calculateTotalShingPerHour = (extractors: any[] = []) => {
@@ -58,6 +84,9 @@ const Home: NextPage = () => {
   useEffect(() => {
     getExtractorConfig().then((response) => {
       setExtractors(response);
+    });
+    getBonusConfig().then((response) => {
+      setBonusConfig(response);
     });
   }, []);
 
@@ -110,17 +139,23 @@ const Home: NextPage = () => {
             <div className="grid grid-cols-2">
               <div className="col-span-1">Total SHING per hour</div>
               <div>
+                {calculateTotalShingPerHour(data.extractors) *
+                  (1 + calculateTotalBonus(data.bonuses))}
+              </div>
+              <div className="col-span-1">Base SHING per hour</div>
+              <div>
                 {data?.extractors &&
                   calculateTotalShingPerHour(data.extractors)}
               </div>
+              <div className="col-span-1">Calculate Total Bonus</div>
+              <div>+{calculateTotalBonus(data.bonus)}%</div>
               <div className="col-span-1">Last claimed</div>
               <div>{new Date(data?.last_claim * 1000).toString()}</div>
               <div className="col-span-1">Pending claim</div>
-              <div>
-                {data.to_claim}
-              </div>
+              <div>{data.to_claim}</div>
             </div>
 
+            <div className="mt-4 text-lg">Extractors</div>
             <div className="flex gap-4">
               {data &&
                 data.extractors.map(
@@ -153,10 +188,32 @@ const Home: NextPage = () => {
                   }
                 )}
             </div>
-            <div>
+
+            <div className="mt-4 text-lg">Bonuses</div>
+            <div className="flex gap-4">
               {data &&
-                data.bonus.map((bonus: { key: number; value: number }) => {
-                  <div>{bonus.value}</div>;
+                data.bonus.map((bonusInfo: { key: number; value: number }) => {
+                  const extractor = bonusConfig.find(
+                    (config) => config.template_id === bonusInfo.key
+                  );
+                  return (
+                    <div
+                      className="shadow-md p-4 rounded-md w-48"
+                      key={bonusInfo.key}
+                    >
+                      <div className="flex items-baseline justify-between">
+                        <div className="text-lg">{extractor.label}</div>
+                        <div className="text-gray-500">{bonusInfo.value}x</div>
+                      </div>
+                      <hr />
+                      <div className="pt-4">
+                        <div>+{Number(Number(extractor.value).toFixed(4)) * bonusInfo.value * 100}%</div>
+                        <div className="text-sm text-gray-500">
+                          {Number(Number(extractor.value).toFixed(4)) * 100} each
+                        </div>
+                      </div>
+                    </div>
+                  );
                 })}
             </div>
           </div>

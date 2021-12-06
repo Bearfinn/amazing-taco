@@ -32,9 +32,9 @@ const Home: NextPage = () => {
       const extractor = bonusConfig.find(
         (config) => config.template_id === bonus.key
       );
-      sum += Number(extractor.value)
+      sum += Number(extractor.value) * bonus.value
     });
-    return Number((sum * 100).toFixed(4));
+    return Math.round(sum * 100 * 1e4) / 1e4
   };
 
   const calculateTotalShingPerHour = (extractors: any[] = []) => {

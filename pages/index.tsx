@@ -4,54 +4,13 @@ import Image from "next/image";
 import { config } from "process";
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { rpc } from "../utils/wax";
+import { getBonusConfig, getExtractorConfig, getTacoInventory, rpc } from "../utils/wax";
 
 const Home: NextPage = () => {
   const [address, setAddress] = useState("");
   const [data, setData] = useState<any>(null);
   const [extractors, setExtractors] = useState<any[]>([]);
   const [bonusConfig, setBonusConfig] = useState<any[]>([]);
-
-  const getData = async ({ address }: any) => {
-    const { rows } = await rpc.get_table_rows({
-      json: true,
-      code: "g.taco",
-      scope: "g.taco",
-      table: "claimers",
-      // index_position: 1,
-      upper_bound: "bananaminiox",
-      lower_bound: "banabaminion",
-      limit: 10,
-    });
-
-    return rows;
-  };
-
-  const getExtractorConfig = async () => {
-    const { rows } = await rpc.get_table_rows({
-      json: true,
-      code: "g.taco",
-      scope: "g.taco",
-      table: "configextr",
-      // index_position: 1,
-      limit: 10,
-    });
-
-    return rows;
-  };
-
-  const getBonusConfig = async () => {
-    const { rows } = await rpc.get_table_rows({
-      json: true,
-      code: "g.taco",
-      scope: "g.taco",
-      table: "configbonus",
-      // index_position: 1,
-      limit: 20,
-    });
-
-    return rows;
-  };
 
   const getExtractor = (key: number) => {
     return extractors.find((extractor) => extractor.template_id === key);
@@ -92,7 +51,7 @@ const Home: NextPage = () => {
 
   const fetchData = async () => {
     if (address) {
-      getData(address).then((response) => {
+      getTacoInventory(address).then((response) => {
         setData(response[0]);
       });
     }

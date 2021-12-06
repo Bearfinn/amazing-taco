@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -45,7 +46,7 @@ const Home: NextPage = () => {
       const extractor = getExtractor(extractorInfo.key);
       sum += getShingPerHour(extractor.value) * extractorInfo.value;
     });
-    return Number(sum.toFixed(4));
+    return round(sum)
   };
 
   useEffect(() => {
@@ -117,20 +118,20 @@ const Home: NextPage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-2 p-4 rounded-md border">
               <div className="col-span-1">Total SHING per hour</div>
               <div>
-                {calculateTotalShingPerHour(data.extractors) *
-                  (1 + calculateTotalBonus(data.bonus) / 100)}
+                {formatNumber(calculateTotalShingPerHour(data.extractors) *
+                  (1 + calculateTotalBonus(data.bonus) / 100))}
               </div>
               <div className="col-span-1">Base SHING per hour</div>
-              <div>{calculateTotalShingPerHour(data.extractors)}</div>
+              <div>{formatNumber(calculateTotalShingPerHour(data.extractors))}</div>
               <div className="col-span-1">Calculate Total Bonus</div>
-              <div>+{calculateTotalBonus(data.bonus)}%</div>
+              <div>+{formatNumber(calculateTotalBonus(data.bonus))}%</div>
               <div className="col-span-1">Last claimed</div>
-              <div>{new Date(data?.last_claim * 1000).toString()}</div>
+              <div>{dayjs(data?.last_claim * 1000).format("D MMM YYYY HH:mm:ssZ")}</div>
               <div className="col-span-1">Pending claim</div>
-              <div>{data.to_claim}</div>
+              <div>{formatNumber(data.to_claim / 1e4)} SHING</div>
             </div>
 
             <div className="mt-4 text-lg">Extractors</div>

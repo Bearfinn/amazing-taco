@@ -9,8 +9,8 @@ const getTacoInventory = async ({ address }: any) => {
     scope: "g.taco",
     table: "claimers",
     // index_position: 1,
-    upper_bound: "bananaminiox",
-    lower_bound: "banabaminion",
+    upper_bound: address,
+    lower_bound: address,
     limit: 10,
   });
 

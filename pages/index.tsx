@@ -4,7 +4,12 @@ import Image from "next/image";
 import { config } from "process";
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { getBonusConfig, getExtractorConfig, getTacoInventory, rpc } from "../utils/wax";
+import {
+  getBonusConfig,
+  getExtractorConfig,
+  getTacoInventory,
+  rpc,
+} from "../utils/wax";
 
 const Home: NextPage = () => {
   const [address, setAddress] = useState("");
@@ -26,7 +31,7 @@ const Home: NextPage = () => {
       const extractor = bonusConfig.find(
         (config) => config.template_id === bonus.key
       );
-      sum += extractor.value;
+      sum += Number(extractor.value)
     });
     return Number((sum * 100).toFixed(4));
   };
@@ -51,7 +56,7 @@ const Home: NextPage = () => {
 
   const fetchData = async () => {
     if (address) {
-      getTacoInventory(address).then((response) => {
+      getTacoInventory({ address }).then((response) => {
         setData(response[0]);
       });
     }
@@ -64,14 +69,14 @@ const Home: NextPage = () => {
   return (
     <div className="container mx-auto">
       <Head>
-        <title>Shingilator</title>
+        <title>Shingulator</title>
         <meta name="description" content="Extractors to the moon!" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
         <h1 className="text-3xl my-4">
-          Shingilator{" "}
+          Shingulator{" "}
           <span className="text-sm bg-gray-200 rounded-full px-2 py-1">
             Beta
           </span>
@@ -99,13 +104,10 @@ const Home: NextPage = () => {
               <div className="col-span-1">Total SHING per hour</div>
               <div>
                 {calculateTotalShingPerHour(data.extractors) *
-                  (1 + calculateTotalBonus(data.bonuses))}
+                  (1 + calculateTotalBonus(data.bonus) / 100)}
               </div>
               <div className="col-span-1">Base SHING per hour</div>
-              <div>
-                {data?.extractors &&
-                  calculateTotalShingPerHour(data.extractors)}
-              </div>
+              <div>{calculateTotalShingPerHour(data.extractors)}</div>
               <div className="col-span-1">Calculate Total Bonus</div>
               <div>+{calculateTotalBonus(data.bonus)}%</div>
               <div className="col-span-1">Last claimed</div>
@@ -115,7 +117,7 @@ const Home: NextPage = () => {
             </div>
 
             <div className="mt-4 text-lg">Extractors</div>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               {data &&
                 data.extractors.map(
                   (extractorInfo: { key: number; value: number }) => {
@@ -149,7 +151,7 @@ const Home: NextPage = () => {
             </div>
 
             <div className="mt-4 text-lg">Bonuses</div>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               {data &&
                 data.bonus.map((bonusInfo: { key: number; value: number }) => {
                   const extractor = bonusConfig.find(
@@ -166,9 +168,16 @@ const Home: NextPage = () => {
                       </div>
                       <hr />
                       <div className="pt-4">
-                        <div>+{Number(Number(extractor.value).toFixed(4)) * bonusInfo.value * 100}%</div>
+                        <div>
+                          +
+                          {Number(Number(extractor.value).toFixed(4)) *
+                            bonusInfo.value *
+                            100}
+                          %
+                        </div>
                         <div className="text-sm text-gray-500">
-                          {Number(Number(extractor.value).toFixed(4)) * 100} each
+                          {Number(Number(extractor.value).toFixed(4)) * 100}{" "}
+                          each
                         </div>
                       </div>
                     </div>

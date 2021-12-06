@@ -1,9 +1,36 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import type { NextPage } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import styles from "../styles/Home.module.css";
+import { rpc } from "../utils/wax";
 
 const Home: NextPage = () => {
+  const [data, setData] = useState<any[]>([]);
+  const address = ".3mrs.wam";
+  const getData = async ({ address }: any) => {
+    const { rows } = await rpc.get_table_rows({
+      json: true,
+      code: "g.taco",
+      scope: "g.taco",
+      table: "claimers",
+      // index_position: 1,
+      upper_bound: "bananaminiox",
+      lower_bound: "banabaminion",
+      limit: 10
+    });
+    
+    return rows;
+  };
+
+  useEffect(() => {
+    if (address) {
+      getData(address).then((response) => {
+        setData(response);
+      });
+    }
+  }, [address]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -16,40 +43,9 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
+        <div>
+        {JSON.stringify(data)}
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
         </div>
       </main>
 
@@ -59,14 +55,11 @@ const Home: NextPage = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
+          Powered by bananaminion
         </a>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

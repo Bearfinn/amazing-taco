@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { config } from "process";
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
@@ -88,6 +89,7 @@ const Home: NextPage = () => {
           <input
             className="border px-2 py-2 rounded"
             value={address}
+            onKeyDown={(e) => e.key === 'Enter' && fetchData()}
             onChange={(e) => setAddress(e.target.value)}
           ></input>
           <button

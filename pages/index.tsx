@@ -4,6 +4,7 @@ import Image from "next/image";
 import { config } from "process";
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
+import { formatNumber } from "../utils/format";
 import {
   getBonusConfig,
   getExtractorConfig,
@@ -14,15 +15,15 @@ import {
 const Home: NextPage = () => {
   const [address, setAddress] = useState("");
   const [data, setData] = useState<any>(null);
-  const [extractors, setExtractors] = useState<any[]>([]);
+  const [extractorConfig, setExtractorConfig] = useState<any[]>([]);
   const [bonusConfig, setBonusConfig] = useState<any[]>([]);
 
   const getExtractor = (key: number) => {
-    return extractors.find((extractor) => extractor.template_id === key);
+    return extractorConfig.find((config) => config.template_id === key);
   };
 
-  const calculateShing = (value: number) => {
-    return Number(((value / 28) * 10.08).toFixed(4));
+  const getShingPerHour = (value: number) => {
+    return Number(formatNumber(value / 28 * 10.08));
   };
 
   const calculateTotalBonus = (bonuses: any[] = []) => {
@@ -40,14 +41,14 @@ const Home: NextPage = () => {
     let sum = 0;
     extractors.forEach((extractorInfo) => {
       const extractor = getExtractor(extractorInfo.key);
-      sum += calculateShing(extractor.value) * extractorInfo.value;
+      sum += getShingPerHour(extractor.value) * extractorInfo.value;
     });
     return Number(sum.toFixed(4));
   };
 
   useEffect(() => {
     getExtractorConfig().then((response) => {
-      setExtractors(response);
+      setExtractorConfig(response);
     });
     getBonusConfig().then((response) => {
       setBonusConfig(response);
@@ -136,12 +137,12 @@ const Home: NextPage = () => {
                         <hr />
                         <div className="pt-4">
                           <div>
-                            {calculateShing(extractor.value) *
+                            {getShingPerHour(extractor.value) *
                               extractorInfo.value}{" "}
                             SHING
                           </div>
                           <div className="text-sm text-gray-500">
-                            {calculateShing(extractor.value)} SHING/hr each
+                            {getShingPerHour(extractor.value)} SHING/hr each
                           </div>
                         </div>
                       </div>

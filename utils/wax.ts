@@ -1,4 +1,5 @@
 import { JsonRpc } from "eosjs";
+import { Inventory } from "../types";
 
 const rpc = new JsonRpc("https://wax.pink.gg");
 
@@ -15,6 +16,29 @@ const getTacoInventory = async ({ address }: any) => {
   });
 
   return rows;
+};
+
+export const getTacoInventories = async (): Promise<Inventory[]> => {
+  let inventories: any[] = [];
+  let has_more = true
+  let next_key_string: string = ""
+  do {
+    const response = await rpc.get_table_rows({
+      json: true,
+      code: "g.taco",
+      scope: "g.taco",
+      table: "claimers",
+      lower_bound: next_key_string,
+      limit: 500,
+    });
+  
+    const { rows, more, next_key } = response;
+    has_more = more
+    next_key_string = next_key
+    inventories = inventories.concat(rows)
+  } while (has_more)
+
+  return inventories;
 };
 
 const getExtractorConfig = async () => {

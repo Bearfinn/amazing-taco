@@ -3,15 +3,12 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { config } from "process";
 import { useEffect, useState } from "react";
+import { useCalculateShing } from "../hooks/useCalculate";
 import styles from "../styles/Home.module.css";
-import { formatNumber, getExtractorImageUrl, round } from "../utils/format";
+import { formatNumber, getExtractorImageUrl } from "../utils/format";
 import {
-  getBonusConfig,
-  getExtractorConfig,
-  getTacoInventory,
-  rpc,
+  getTacoInventory
 } from "../utils/wax";
 
 const Home: NextPage = () => {
@@ -20,43 +17,12 @@ const Home: NextPage = () => {
   const [extractorConfig, setExtractorConfig] = useState<any[]>([]);
   const [bonusConfig, setBonusConfig] = useState<any[]>([]);
 
-  const getExtractor = (key: number) => {
-    return extractorConfig.find((config) => config.template_id === key);
-  };
-
-  const getShingPerHour = (value: number) => {
-    return round((value / 28) * 10.08);
-  };
-
-  const calculateTotalBonus = (bonuses: any[] = []) => {
-    let sum = 0;
-    bonuses.forEach((bonus) => {
-      const extractor = bonusConfig.find(
-        (config) => config.template_id === bonus.key
-      );
-      sum += Number(extractor.value) * bonus.value;
-    });
-    const totalBonus = Math.round(sum * 100 * 1e4) / 1e4;
-    return Math.min(totalBonus, 10);
-  };
-
-  const calculateTotalShingPerHour = (extractors: any[] = []) => {
-    let sum = 0;
-    extractors.forEach((extractorInfo) => {
-      const extractor = getExtractor(extractorInfo.key);
-      sum += getShingPerHour(extractor.value) * extractorInfo.value;
-    });
-    return round(sum);
-  };
-
-  useEffect(() => {
-    getExtractorConfig().then((response) => {
-      setExtractorConfig(response);
-    });
-    getBonusConfig().then((response) => {
-      setBonusConfig(response);
-    });
-  }, []);
+  const {
+    calculateTotalBonus,
+    calculateTotalShingPerHour,
+    getExtractor,
+    getShingPerHour,
+  } = useCalculateShing();
 
   const { query } = useRouter();
 
@@ -84,23 +50,16 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <h1 className="text-3xl my-4">
-          Shingulator{" "}
-          <span className="text-sm bg-gray-200 rounded-full px-2 py-1">
-            Beta
-          </span>
-        </h1>
-
         <div className="flex gap-4">
           <input
-            className="border px-2 py-2 rounded"
+            className="px-2 py-2 border rounded"
             value={address}
             placeholder={`cloud.wam or anchorwallet`}
             onKeyDown={(e) => e.key === "Enter" && fetchData()}
             onChange={(e) => setAddress(e.target.value)}
           ></input>
           <button
-            className="bg-blue-900 text-yellow-400 px-4 py-2 rounded-md"
+            className="px-4 py-2 text-yellow-400 bg-blue-900 rounded-md"
             onClick={() => fetchData()}
           >
             Check
@@ -118,7 +77,7 @@ const Home: NextPage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 p-4 rounded-md border">
+            <div className="grid grid-cols-2 p-4 border rounded-md">
               <div className="col-span-1">Total SHING per hour</div>
               <div>
                 {formatNumber(
@@ -146,18 +105,23 @@ const Home: NextPage = () => {
                 data.extractors.map(
                   (extractorInfo: { key: number; value: number }) => {
                     const extractor = getExtractor(extractorInfo.key);
-                    return (
+                    return extractor && (
                       <div
-                        className="shadow-md p-4 rounded-md w-48"
+                        className="w-48 p-4 rounded-md shadow-md"
                         key={extractorInfo.key}
                       >
                         <div className="flex items-baseline justify-between">
-                          <div className="text-lg">{extractor.label}</div>
+                          <div className="text-lg">{extractor?.label}</div>
                           <div className="text-gray-500">
                             {extractorInfo.value}x
                           </div>
                         </div>
-                        <Image src={getExtractorImageUrl(extractor.label)} width="100" height="100" alt="Extractor" />
+                        <Image
+                          src={getExtractorImageUrl(extractor.label)}
+                          width="100"
+                          height="100"
+                          alt="Extractor"
+                        />
                         <div className="pt-4">
                           <div>
                             {getShingPerHour(extractor.value) *
@@ -183,7 +147,7 @@ const Home: NextPage = () => {
                   );
                   return (
                     <div
-                      className="shadow-md p-4 rounded-md w-48"
+                      className="w-48 p-4 rounded-md shadow-md"
                       key={bonusInfo.key}
                     >
                       <div className="flex items-baseline justify-between">
@@ -218,7 +182,8 @@ const Home: NextPage = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by <span className="mx-1 underline">bananaminion</span> (Anchor Wallet 🥺)
+          Powered by <span className="mx-1 underline">bananaminion</span>{" "}
+          (Anchor Wallet 🥺)
         </a>
       </footer>
     </div>

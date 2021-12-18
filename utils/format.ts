@@ -8,5 +8,6 @@ export const getExtractorImageUrl = (label: string) => {
 }
 
 export const round = (number: number, exponent: number = 4) => {
-  return Math.round(number * Math.pow(10, number)) / Math.pow(10, number)
+  return Number(new Intl.NumberFormat('en-US', { maximumSignificantDigits: exponent }).format(number))
+  // return Math.round(number * Math.pow(10, number)) / Math.pow(10, number)
 }

@@ -41,6 +41,12 @@ export const getTacoInventories = async (): Promise<Inventory[]> => {
   return inventories;
 };
 
+export const getBalance = async (account: string) => {
+  const rows = await rpc.get_currency_balance("t.taco", account, "SHING")
+  console.log(rows)
+  return rows[0]
+}
+
 const getExtractorConfig = async () => {
   const { rows } = await rpc.get_table_rows({
     json: true,

@@ -47,13 +47,13 @@ const Leaderboard = () => {
         return b.value - a.value;
       });
 
-      const leaderboard = players.slice(0, 20);
+      const leaderboard = players.slice(0, 50);
       setLeaderboard(leaderboard);
-      for (const rate of leaderboard) {
-        const balance = await getBalance(rate.account);
-        rate.balance = balance;
+      for (const topUser of leaderboard) {
+        const balance = await getBalance(topUser.account);
+        topUser.balance = balance;
+        setLeaderboard([...leaderboard]);
       }
-      setLeaderboard(leaderboard);
     };
     sortAndBalance();
   }, [players]);

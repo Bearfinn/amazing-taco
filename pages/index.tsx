@@ -175,17 +175,6 @@ const Home: NextPage = () => {
           </div>
         )}
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by <span className="mx-1 underline">bananaminion</span>{" "}
-          (Anchor Wallet 🥺)
-        </a>
-      </footer>
     </div>
   );
 };

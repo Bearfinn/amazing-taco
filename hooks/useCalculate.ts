@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Bonus, Extractor, ExtractorConfig } from "../types";
-import { round } from "../utils/format";
-import { getExtractorConfig, getBonusConfig } from "../utils/wax";
+import { getBonusConfig, getExtractorConfig } from "../utils/wax";
 
 export const useCalculateShing = () => {
   const [extractorConfig, setExtractorConfig] = useState<ExtractorConfig[]>([]);
@@ -21,6 +20,11 @@ export const useCalculateShing = () => {
     return extractorConfig.find((config) => config.template_id === key);
   };
 
+  const getBonus = (key: number) => {
+    if (bonusConfig.length === 0) throw new Error("Bonuses config not ready")
+    return bonusConfig.find((config) => config.template_id === key);
+  }
+
   const getShingPerHour = (value: number) => {
     // console.log(value, (value / 28) * 10.08, round(868.3199999999999), round(2314.08))
     return (value / 28) * 10.08
@@ -30,9 +34,7 @@ export const useCalculateShing = () => {
     let sum = 0;
     if (bonusConfig.length === 0) throw new Error("Bonus config not ready")
     bonuses.forEach((bonus) => {
-      const bonusConf = bonusConfig.find(
-        (config) => config.template_id === bonus.key
-      );
+      const bonusConf = getBonus(bonus.key);
       if (bonusConf) {
         sum += Number(bonusConf.value) * bonus.value;
       }
@@ -61,6 +63,7 @@ export const useCalculateShing = () => {
     calculateTotalBonus,
     calculateTotalShingPerHour,
     getExtractor,
+    getBonus,
     getShingPerHour,
   }
 }

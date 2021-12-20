@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCalculateShing } from "../hooks/useCalculate";
 import { formatNumber } from "../utils/format";
 import { getBalance, getTacoInventories } from "../utils/wax";

@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useCalculateShing } from "../hooks/useCalculate";
-import styles from "../styles/Home.module.css";
 import { formatNumber, getExtractorImageUrl } from "../utils/format";
 import {
   getTacoInventory
@@ -14,13 +13,12 @@ import {
 const Home: NextPage = () => {
   const [address, setAddress] = useState("");
   const [data, setData] = useState<any>(null);
-  const [extractorConfig, setExtractorConfig] = useState<any[]>([]);
-  const [bonusConfig, setBonusConfig] = useState<any[]>([]);
 
   const {
     calculateTotalBonus,
     calculateTotalShingPerHour,
     getExtractor,
+    getBonus,
     getShingPerHour,
   } = useCalculateShing();
 
@@ -142,9 +140,7 @@ const Home: NextPage = () => {
             <div className="flex flex-wrap gap-4">
               {data &&
                 data.bonus.map((bonusInfo: { key: number; value: number }) => {
-                  const extractor = bonusConfig.find(
-                    (config) => config.template_id === bonusInfo.key
-                  );
+                  const extractor = getBonus(bonusInfo.key)
                   return (
                     <div
                       className="w-48 p-4 rounded-md shadow-md"

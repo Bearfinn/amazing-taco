@@ -79,10 +79,10 @@ const Leaderboard = () => {
               >
                 <div className="col-span-1 text-right">{index + 1}</div>
                 <div className="col-span-5">{account}</div>
-                <div className="col-span-3 font-mono text-right">{balance}</div>
                 <div className="col-span-3 font-mono text-right">
                   {formatNumber(value)} SHING/hr
                 </div>
+                <div className="col-span-3 font-mono text-right">{balance}</div>
               </div>
             );
           })}

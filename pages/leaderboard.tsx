@@ -68,8 +68,8 @@ const Leaderboard = () => {
           <div className="grid grid-cols-12 gap-4 my-4 hover:gap-8">
             <div className="col-span-1 text-right">No.</div>
             <div className="col-span-5">Account</div>
-            <div className="col-span-3 font-mono text-right">Balance</div>
-            <div className="col-span-3 font-mono text-right">SHING/hr</div>
+            <div className="col-span-3 font-mono text-right">Generated</div>
+            <div className="col-span-3 font-mono text-right">SHING Balance</div>
           </div>
           {leaderboard.map(({ account, value, balance }, index) => {
             return (
